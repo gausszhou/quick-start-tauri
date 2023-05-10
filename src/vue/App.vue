@@ -1,5 +1,17 @@
 <template>
-  <el-tabs type="border-card" v-model="activeName" class="js-api-tabs">
+  <el-tabs type="border-card" v-model="activeName" class="js-api-tabs" tab-position="left" style="height: 100vh;">
+    <el-tab-pane
+      v-for="tool in tools"
+      :key="tool.value"
+      :label="tool.label"
+      :name="tool.value"
+    >
+      <iframe
+        class="iframe"
+        :src="`./${tool.value}/index.html`"
+        frameborder="0"
+      ></iframe>
+    </el-tab-pane>
     <el-tab-pane label="App" name="app">
       <JsApiApp />
     </el-tab-pane>
@@ -10,19 +22,19 @@
       <JsApiDialog />
     </el-tab-pane>
     <el-tab-pane label="Path" name="path">
-      <JsApiPath/>
+      <JsApiPath />
     </el-tab-pane>
     <el-tab-pane label="FS" name="fs">
-      <JsApiFs/>
+      <JsApiFs />
     </el-tab-pane>
     <el-tab-pane label="Http" name="http">
-      <JsApiHttp/>
+      <JsApiHttp />
     </el-tab-pane>
     <el-tab-pane label="Notification" name="notification">
-      <JsApiNotification/>
+      <JsApiNotification />
     </el-tab-pane>
     <el-tab-pane label="GlobalShortcut" name="globalshortcut">
-      <JsApiGlobalShortcut/>
+      <JsApiGlobalShortcut />
     </el-tab-pane>
     <el-tab-pane label="OS" name="os">
       <JsApiOs />
@@ -47,7 +59,10 @@ import JsApiNotification from "./components/JsApiNotification.vue";
 import JsApiOs from "./components/JsApiOs.vue";
 import JsApiWindow from "./components/JsApiWindow.vue";
 import JsApiGlobalShortcut from "./components/JsApiGlobalShortcut.vue";
-const activeName = ref('app')
+import { toolList, toolDefault } from "../config";
+
+const activeName = ref(toolDefault);
+const tools = toolList;
 </script>
 
 <style scoped></style>
