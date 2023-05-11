@@ -41,8 +41,9 @@
         "fullscreen": false,
         "resizable": true,
         "title": "GTools",
-        "width": 800,
-        "height": 600
+        "center": true,
+        "width": 1366,
+        "height": 768
       }
     ]
   }
