@@ -1,0 +1,32 @@
+.g-menu {
+  width: 150px;
+  border-left: 1px solid #1e1e1e;
+}
+
+
+
+.g-menu-item {
+  height: 24px;
+  padding-right: 16px;
+  color: #ccc;
+  font-size: 14px;
+  line-height: 24px;
+  text-align: right;
+  border: 1px solid transparent;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.g-menu-item:hover {
+  color: #ffffff;
+  background-color: #3e3d32;
+}
+
+.g-menu-item.is-active {
+  background-color: #414339;
+}
+
+.g-menu-item.is-active:focus {
+  background-color: #75715e;
+  border-color: #99947c;
+}

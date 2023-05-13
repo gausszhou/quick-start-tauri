@@ -1,0 +1,51 @@
+.el-tabs .el-tabs__active-bar {
+  display: none;
+}
+
+.el-tabs--left .el-tabs__header.is-left {
+  margin: 0;
+}
+
+.el-tabs--left .el-tabs__nav-wrap.is-left::after {
+  display: none;
+}
+
+.el-tabs__header {
+  width: 150px; 
+  background-color: #272822;
+  border-right: 1px solid transparent;
+  box-sizing: border-box;
+}
+
+.el-tabs__item {
+  width: 150px;
+  height: 24px;
+  line-height: 24px;
+  border: 1px solid transparent;
+  box-sizing: border-box;
+}
+
+.el-tabs__item,
+.el-tabs__item:hover,
+.el-tabs__item.is-active,
+.el-tabs__item.is-active:hover {
+  color: #cccccc;
+}
+
+.el-tabs__item:hover {
+  color: #ffffff;
+  background-color: #3e3d32;
+}
+
+.el-tabs__item.is-active {
+  background-color: #414339;
+}
+
+.el-tabs__item.is-active:focus {
+  border-color: #99947c;
+  background-color: #75715e;
+}
+
+.el-tabs .el-tabs__content .el-tab-pane.dark {
+  background-color: #2a2a2a;
+}

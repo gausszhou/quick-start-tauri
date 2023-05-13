@@ -1,4 +1,4 @@
-export const toolDefault = "diff";
+export const toolDefault = "regexp";
 export const toolList = [
   {
     value: "regexp",

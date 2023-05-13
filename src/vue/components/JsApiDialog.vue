@@ -2,7 +2,6 @@
 import { ref } from "vue";
 import { ask, confirm, message, open, save } from "@tauri-apps/api/dialog";
 import { appDataDir } from "@tauri-apps/api/path";
-
 const dialogs = ref([
   {
     title: "Ask",
@@ -101,7 +100,6 @@ async function saveFileDialog() {
     </el-descriptions-item>
   </el-descriptions>
 </template>
-
 <style scoped>
 .el-tag {
   margin-left: 20px;

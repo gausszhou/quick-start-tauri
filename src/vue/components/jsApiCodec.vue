@@ -1,95 +1,75 @@
-<template>
-  <div id="codec">
-    <div id="codec-form">
-      <div class="block">
-        <el-button color="#626aef" @click="onConvertButtonClick">转换</el-button>
-        <el-button type="warning" @click="onClearButtonClick">清空</el-button>
-      </div>
-      <el-radio-group v-model="radio" @change="onRadioChange">
-        <div class="block">
-          <div class="row" v-for="option in encodeList" :key="option.value">
-            <el-radio :label="option.value">{{ option.label }}</el-radio>
-          </div>
-          <div class="row" v-for="option in decodeList" :key="option.value">
-            <el-radio :label="option.value">{{ option.label }}</el-radio>
-          </div>
-        </div>
-      </el-radio-group>
-    </div>
-    <div id="codec-editor">
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import * as monaco from "monaco-editor/esm/vs/editor/editor.api";
 import "monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution.js";
+import EncodeUtils from '../../utils/endecode-lib.js';
+import he from '../../utils/he.js';
 import { onMounted, onUnmounted, ref } from "vue";
-import Monokai from "../config/Monokai.json";
-import { ElMessage, ElNotification } from "element-plus";
-monaco.editor.defineTheme('Monokai', Monokai as monaco.editor.IStandaloneThemeData)
-monaco.editor.setTheme('Monokai')
+import dayjs from "dayjs";
 
-const radio = ref('utf8Encode')
+const radio = ref("utf8Encode");
 
 const encodeList = ref([
   {
-    label: 'URL编码',
-    value: 'utf8Encode'
+    label: "URL 编码",
+    value: "utf8Encode",
   },
   {
-    label: 'UTF16编码',
-    value: 'utf16Encode'
+    label: "UTF16 编码",
+    value: "utf16Encode",
   },
   {
-    label: 'Base64编码',
-    value: 'base64Encode'
+    label: "Base64 编码",
+    value: "base64Encode",
   },
   {
-    label: 'Hex编码',
-    value: 'hexEncode'
+    label: "Hex 编码",
+    value: "hexEncode",
   },
   {
-    label: 'Unicode编码',
-    value: 'uniEncode'
+    label: "Unicode 编码",
+    value: "uniEncode",
   },
-  {
-    label: 'MD5哈希',
-    value: 'md5Encode'
-  },
-  {
-    label: 'Sha1哈希',
-    value: 'sha1Encode'
-  },
-])
+
+]);
 
 const decodeList = ref([
   {
-    label: 'URL解码',
-    value: 'utf8Decode'
+    label: "URL 解码",
+    value: "utf8Decode",
   },
   {
-    label: 'UTF16编码',
-    value: 'utf16Decode'
+    label: "UTF16 解码",
+    value: "utf16Decode",
   },
   {
-    label: 'Base64解码',
-    value: 'base64Decode'
+    label: "Base64 解码",
+    value: "base64Decode",
   },
   {
-    label: 'Hex解码',
-    value: 'hexDecode'
+    label: "Hex 解码",
+    value: "hexDecode",
   },
   {
-    label: 'Unicode解码',
-    value: 'uniDecode'
+    label: "Unicode 解码",
+    value: "uniDecode",
   },
-  {
-    label: 'URL参数解析',
-    value: 'urlParamsDecode'
-  },
-])
 
+]);
+
+const otherList = [
+  {
+    label: "URL 参数解析",
+    value: "urlParamsDecode",
+  },
+  {
+    label: "MD5 哈希",
+    value: "md5Encode",
+  },
+  {
+    label: "Sha1 哈希",
+    value: "sha1Encode",
+  },
+]
 
 // 初始化变量
 let fileCounter = 0;
@@ -109,7 +89,7 @@ function createContainer() {
 }
 
 function addContainer($parent: HTMLElement, $children: HTMLElement) {
-  $parent.appendChild($children)
+  $parent.appendChild($children);
 }
 
 const editorConfigDefault = {
@@ -118,23 +98,16 @@ const editorConfigDefault = {
   folding: true,
 };
 
-function createEditor(
-  $container: HTMLElement,
-  model: monaco.editor.ITextModel
-) {
+function createEditor($container: HTMLElement, model: monaco.editor.ITextModel) {
   const editor = monaco.editor.create($container, {
     ...editorConfigDefault,
-    wordWrap: 'on', // 自动换行
+    wordWrap: "on", // 自动换行
     model: model,
   });
   return editor;
 }
 
-function addEditor(
-  editor:
-    | monaco.editor.IStandaloneCodeEditor
-    | monaco.editor.IStandaloneDiffEditor
-) {
+function addEditor(editor: monaco.editor.IStandaloneCodeEditor | monaco.editor.IStandaloneDiffEditor) {
   editorList.push(editor);
 }
 
@@ -145,74 +118,124 @@ function addEventListener(editor: monaco.editor.IStandaloneCodeEditor) {
 }
 
 function processValue(value1: string, type: string) {
-  if (value1 === '') return '';
-  let value2 = '';
-  if (type === 'utf8Encode') {
-    value2 = encodeURI(value1)
+  let value2: string = "";
+  let flag: string = "success";
+  if (value1 === "") return ["", "empty"];
+  if (type === "uniEncode") {
+    value2 = EncodeUtils.uniEncode(value1);
+  } else if (type === "uniDecode") {
+    value2 = EncodeUtils.uniDecode(value1.replace(/\\U/g, "\\u"));
+  } else if (type === "utf8Encode") {
+    value2 = encodeURIComponent(value1);
+  } else if (type === "utf8Decode") {
+    value2 = decodeURIComponent(value1);
+  } else if (type === "utf16Encode") {
+    value2 = EncodeUtils.utf8to16(encodeURIComponent(value1));
+  } else if (type === "utf16Decode") {
+    value2 = decodeURIComponent(EncodeUtils.utf16to8(value1));
+  } else if (type === "base64Encode") {
+    value2 = EncodeUtils.base64Encode(EncodeUtils.utf8Encode(value1));
+  } else if (type === "base64Decode") {
+    value2 = EncodeUtils.utf8Decode(EncodeUtils.base64Decode(value1));
+  } else if (type === "md5Encode") {
+    value2 = EncodeUtils.md5(value1);
+  } else if (type === "hexEncode") {
+    value2 = EncodeUtils.hexEncode(value1);
+  } else if (type === "hexDecode") {
+    value2 = EncodeUtils.hexDecode(value1);
+  } else if (type === "html2js") {
+    value2 = EncodeUtils.html2js(value1);
+  } else if (type === "sha1Encode") {
+    value2 = EncodeUtils.sha1Encode(value1);
+  } else if (type === "htmlEntityEncode") {
+    value2 = he.encode(value1, {
+      useNamedReferences: true,
+      allowUnsafeSymbols: true,
+    });
+  } else if (type === "htmlEntityFullEncode") {
+    value2 = he.encode(value1, {
+      encodeEverything: true,
+      useNamedReferences: true,
+      allowUnsafeSymbols: true,
+    });
+  } else if (type === "htmlEntityDecode") {
+    value2 = he.decode(value1, {
+      isAttributeValue: false,
+    });
+  } else if (type === "urlParamsDecode") {
+    let res = EncodeUtils.urlParamsDecode(value1);
+    if (res.error) {
+      value2 = res.error;
+    } else {
+      value2 = res;
+    }
+  } else {
+    value2 = "";
+    flag = "unrealized";
   }
-  if (type === 'utf8Decode') {
-    value2 = decodeURI(value1)
-  }
-  if (type === 'base64Encode') {
-    value2 = window.btoa(value1)
-  }
-  if (type === 'base64Decode') {
-    value2 = window.btoa(value1)
-  }
-  if (value2 === '') {
-    ElNotification.info({
-      title: 'Info',
-      message: '暂未实现',
-      position: 'bottom-right'
-    })
-  }
-  return value2
+  return [value2, flag];
 }
 
 const code1 = `粘贴需要进行转换的字符串`;
 const code2 = ``;
-
+const code3 = ``;
 const model1 = createModel(code1, "text/plain");
 const model2 = createModel(code2, "text/plain");
+const model3 = createModel(code3, "text/plain");
 const $container1 = createContainer();
 const $container2 = createContainer();
+const $container3 = createContainer();
 const editor1 = createEditor($container1, model1);
 const editor2 = createEditor($container2, model2);
-editor2.updateOptions({ readOnly: true, })
-addEventListener(editor1)
-addEventListener(editor2)
+const editor3 = createEditor($container3, model3);
+editor2.updateOptions({ readOnly: true });
+editor3.updateOptions({
+  readOnly: true,
+  scrollBeyondLastColumn: 1,
+  minimap: {
+    // 关闭代码缩略图
+    enabled: false, // 是否启用预览图
+  },
+});
+addEventListener(editor1);
+addEventListener(editor2);
+addEventListener(editor3);
 addEditor(editor1);
 addEditor(editor2);
+addEditor(editor3);
 
-const clear = () => {
-  editor1.setValue('')
+window.oncontextmenu = (e) => {
+  e.preventDefault();
+};
+
+function addConsole(message: string) {
+  const originMessage = editor3.getValue();
+  const now = dayjs().format("hh:mm:ss");
+  editor3.setValue(now + message + "\n" + originMessage);
 }
 
-const excute = () => {
+function excute() {
   const value1 = editor1.getValue();
-  const type = radio.value
+  const type = radio.value;
   try {
-    const value2 = processValue(value1, type)
-    editor2.setValue(value2);
-    if (value2 ==='') return false;
-    ElNotification.success({
-      title: 'Succes',
-      message: '转换成功',
-      position: 'bottom-right'
-    })
+    const [value, flag] = processValue(value1, type);
+    editor2.setValue(value as string);
+    if (flag === "unrealized") {
+      addConsole("\t[WARN]\t" + "Unrealized");
+    }
+    if (flag === "success") {
+      addConsole("\t[INFO]\t" + "Success");
+    }
   } catch (error: any) {
-    editor2.setValue(error.message as string);
-    ElNotification.error({
-      title: 'Error',
-      message: '转换错误',
-      position: 'bottom-right'
-    })
+    editor2.setValue("");
+    addConsole("\t[Error]\t" + error.message);
   }
 }
 
 onMounted(() => {
-  addContainer(document.getElementById("codec-editor") as HTMLElement, $container1)
-  addContainer(document.getElementById("codec-editor") as HTMLElement, $container2)
+  addContainer(document.getElementById("codec-editor") as HTMLElement, $container1);
+  addContainer(document.getElementById("codec-editor") as HTMLElement, $container2);
+  addContainer(document.getElementById("codec-console") as HTMLElement, $container3);
 });
 
 onUnmounted(() => {
@@ -221,21 +244,46 @@ onUnmounted(() => {
   });
 });
 
-// editor1.onDidChangeModelContent(e => {
-//   excute()
-// })
+editor1.onDidChangeModelContent((e) => {
+  excute();
+});
 
 const onRadioChange = () => {
-  excute()
-}
-const onConvertButtonClick = () => {
-  excute()
-}
-const onClearButtonClick = () => {
-  clear()
-}
+  excute();
+};
 
+const onRadioClick = (value: string) => {
+  radio.value = value;
+  onRadioChange();
+};
 </script>
+
+<template>
+  <div id="codec">
+    <div id="codec-form">
+      <div class="g-menu">
+        <div class="g-menu-item" tabindex="0" :class="{ 'is-active': option.value === radio }"
+          v-for="option in encodeList" :key="option.value" @click="onRadioClick(option.value)">
+          <span class="label">{{ option.label }}</span>
+        </div>
+        <div class="g-divider"></div>
+        <div class="g-menu-item" tabindex="0" :class="{ 'is-active': option.value === radio }"
+          v-for="option in decodeList" :key="option.value" @click="onRadioClick(option.value)">
+          <span class="label">{{ option.label }}</span>
+        </div>
+        <div class="g-divider"></div>
+        <div class="g-menu-item" tabindex="0" :class="{ 'is-active': option.value === radio }"
+          v-for="option in otherList" :key="option.value" @click="onRadioClick(option.value)">
+          <span class="label">{{ option.label }}</span>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div id="codec-editor"></div>
+      <div id="codec-console"></div>
+    </div>
+  </div>
+</template>
 
 <style>
 #codec {
@@ -245,26 +293,28 @@ const onClearButtonClick = () => {
 }
 
 #codec-form {
+  width: 150px;
   height: 100%;
 }
 
-#codec-form .block {
-  width: 160px;
-  border-top: 1px solid #f5f7fa;
-}
-
-#codec-form .block:first-of-type {
-  border-top: 1px solid transparent;
-}
-
 #codec-editor {
-  width: calc(100vw - 320px);
-  height: calc(100vh - 30px);
+  width: calc(100vw - 300px);
+  height: calc(100vh - var(--terminal-height));
   display: flex;
+}
+
+#codec-console {
+  width: calc(100vw - 300px);
+  height: var(--terminal-height);
 }
 
 #codec-editor .container {
   width: 50%;
+  height: 100%;
+}
+
+#codec-console .container {
+  width: 100%;
   height: 100%;
 }
 </style>

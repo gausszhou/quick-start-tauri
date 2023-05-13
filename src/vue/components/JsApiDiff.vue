@@ -8,10 +8,26 @@ import * as monaco from "monaco-editor/esm/vs/editor/editor.api";
 import "monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution.js";
 import { onMounted, onUnmounted } from "vue";
 
-import Monokai from "../config/Monokai.json";
-
-monaco.editor.defineTheme('Monokai', Monokai as monaco.editor.IStandaloneThemeData)
-monaco.editor.setTheme('Monokai')
+// monaco.editor.defineTheme('Monokai', {
+//   base: "vs-dark",
+//   inherit: true,
+//   rules: [{
+//     background: "#272822",
+//     token: ""
+//   }
+//   ],
+//   colors: {
+//     "editor.foreground": "#F8F8F2",
+//     "editor.background": "#272822",
+//     "editor.selectionBackground": "#49483E",
+//     "editor.lineHighlightBackground": "#3E3D32",
+//     "editorCursor.foreground": "#F8F8F0",
+//     "editorWhitespace.foreground": "#3B3A32",
+//     "editorIndentGuide.activeBackground": "#9D550FB0",
+//     "editor.selectionHighlightBorder": "#222218"
+//   }
+// })
+// monaco.editor.setTheme('Monokai')
 
 // 初始化变量
 let fileCounter = 0;
@@ -25,15 +41,14 @@ function createModel(value: string, language: string) {
 const editorConfigDefault = {
   theme: "vs-dark",
   automaticLayout: true, // 自动布局
-  folding: true,
+  // folding: true,
 };
-
 
 function createDiffEditor($container: HTMLElement) {
   const editor = monaco.editor.createDiffEditor($container, {
-    foldingStrategy: "indentation",
-    autoClosingOvertype: "always",
-    autoIndent: "full",
+    // foldingStrategy: "indentation",
+    // autoClosingOvertype: "always",
+    // autoIndent: "full",
     ...editorConfigDefault,
     theme: "vs-dark",
     diffAlgorithm: "advanced",
@@ -89,6 +104,6 @@ onUnmounted(() => {
 <style>
 #diff-editor {
   width: 100%;
-  height: calc(100vh - 30px);
+  height: 100vh;
 }
 </style>

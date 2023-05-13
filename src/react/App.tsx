@@ -1,19 +1,19 @@
 import { useState } from "react";
-import { toolList, toolDefault } from "../config";
+import { toolList, toolDefault } from "./config";
 
 function App() {
   const [activeTool, setActiveTool] = useState(toolDefault);
   return (
     <div className="container">
-      <div className="aside">
+      <div className="aside menu">
         {toolList.map((tool, index) => {
           return (
             <div
               key={index}
-              className={["menu", activeTool === tool.value ? "active" : ""].join(" ")}
+              className={["menu-item", activeTool === tool.value ? "active" : ""].join(" ")}
               onClick={() => setActiveTool(tool.value)}
             >
-              {tool.label}
+              <span className="label">{tool.label}</span>
             </div>
           );
         })}
