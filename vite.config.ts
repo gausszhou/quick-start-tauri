@@ -1,11 +1,42 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import vue from "@vitejs/plugin-vue";
+import AutoImport from 'unplugin-auto-import/vite'
+import Components from 'unplugin-vue-components/vite'
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+// import openTinyVueViteImport from '@opentiny/vue-vite-import'
 
 // https://vitejs.dev/config/
 export default defineConfig(async () => ({
-  plugins: [vue()],
-
+  plugins: [
+    react(),
+    vue(),
+    AutoImport({
+      resolvers: [ElementPlusResolver()],
+    }),
+    Components({
+      resolvers: [ElementPlusResolver()],
+    }),
+    // openTinyVueViteImport(
+    //   [
+    //     {
+    //       libraryName: "@opentiny/vue",
+    //       split: "-",
+    //     },
+    //     {
+    //       libraryName: `@opentiny/vue-icon`,
+    //       libraryDirectory: "lib",
+    //       customName: (name) => {
+    //         return `@opentiny/vue-icon/lib/${name.replace(/^icon-/, "")}.js`;
+    //       },
+    //     },
+    //   ],
+    //   "pc" // 此配置非必选，按需配置(pc|mobile)
+    // ),
+  ],
+  define: {
+    "process.env": { ...process.env },
+  },
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   // prevent vite from obscuring rust errors
   clearScreen: false,

@@ -4,7 +4,7 @@
     "beforeBuildCommand": "npm run build",
     "devPath": "http://localhost:1420",
     "distDir": "../dist",
-    "withGlobalTauri": false
+    "withGlobalTauri": true
   },
   "package": {
     "productName": "GTools",
@@ -12,10 +12,38 @@
   },
   "tauri": {
     "allowlist": {
-      "all": false,
+      "app": {
+        "all": false
+      },
+      "clipboard": {
+        "all": false
+      },
+      "dialog": {
+        "all": false
+      },
+      "fs": {
+        "all": false
+      },
+      "globalShortcut": {
+        "all": false
+      },
+      "http":{
+        "all": false
+      },
+      "notification": {
+        "all": false
+      },
+      "os": {
+        "all": false
+      },
+      "path": {
+        "all": false
+      },
       "shell": {
-        "all": false,
-        "open": true
+        "all": false
+      },
+      "window":{
+        "all": false
       }
     },
     "bundle": {
